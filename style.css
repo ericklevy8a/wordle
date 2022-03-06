@@ -1,0 +1,139 @@
+/* STYLES FOR THE WORDLE CLONE */
+
+html * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --default-color: black;
+    --default-bg-color: white;
+    --box-border-color: #ddd;
+    --box-filled-color: #888;
+    --button-color: black;
+    --button-bg-color: #ccc;
+    --guessed-color: white;
+    --absent-bg-color: #888;
+    --present-bg-color: #dc6;
+    --correct-bg-color: #6a6;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--default-color);
+    background-color: var(--default-bg-color);
+}
+
+.dark {
+    --default-color: white;
+    --default-bg-color: black;
+    --box-border-color: #333;
+    --box-filled-color: #666;
+    --button-color: white;
+    --button-bg-color: #999;
+    --guessed-color: white;
+    --absent-bg-color: #555;
+    --present-bg-color: #ba4;
+    --correct-bg-color: #595;
+}
+
+h1 {
+    text-align: center;
+    padding: 8px;
+}
+
+#game-board {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.letter-row {
+    display: flex;
+}
+
+.letter-box {
+    margin: 2px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    height: 58px;
+    width: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.letter-box[data-state='empty'] { border: 2px solid var(--box-border-color); }
+.letter-box[data-state='filled'] { border: 2px solid var(--box-filled-color); color: var(--default-color); }
+.letter-box[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
+.letter-box[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
+.letter-box[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
+
+#keyboard-cont {
+    margin: 0 8px;
+    user-select: none;
+}
+
+#keyboard-cont div {
+    display: flex;
+    width: 100%;
+    margin: 0 auto 8px;
+    touch-action: manipulation;
+}
+
+.second-row::before,
+.second-row::after {
+    content: " ";
+    flex:0.5;
+}
+
+.third-row button:first-child { flex: 1.15; }
+.third-row button:last-child { flex: 1.75; }
+
+.keyboard-button {
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    padding: 0px;
+    margin: 0 6px 0 0;
+    height: 58px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+button[data-state='normal'] { color: var(--button-color); background-color: var(--button-bg-color); }
+button[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
+button[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
+button[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
+
+@media (min-width: 500px) {
+    #keyboard-cont div {
+        width: 500px;
+    }
+
+    .letter-box {
+        margin: 2px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        height: 80px;
+        width: 80px;
+    }
+
+}
+
+/* End of code. */
