@@ -1,9 +1,12 @@
 # wordle
 My own Wordle clone game!
+
 Based on Paul Akinyemi' "How to Build a Wordle Clone in JavaScript" article on freeCodeCamp
 https://www.freecodecamp.org/news/build-a-wordle-clone-in-javascript/
 
-Almost a funtionally game...!!!
+Almost a functional/complete game...!!!
+
+///// WORK IN PROGRESS /////
 
 To do list:
 * Header nav bar with icons to help, statisticss and settings
