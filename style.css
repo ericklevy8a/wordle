@@ -42,9 +42,27 @@ body {
     --correct-bg-color: #595;
 }
 
+header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--absent-bg-color);
+}
+
 h1 {
     text-align: center;
     padding: 8px;
+}
+
+button.material-icons {
+    background: none;
+    border: none;
+    color: var(--default-color);
+    cursor: pointer;
+    padding: 0 4px;
 }
 
 #game-board {
@@ -134,6 +152,11 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
         width: 80px;
     }
 
+}
+
+/* Adjust the top margin of toast container to leave space for the header height */
+#toast-container.toast-top-center {
+    top: 64px;
 }
 
 /* End of code. */

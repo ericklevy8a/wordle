@@ -1,6 +1,6 @@
 // Wordle Clone Script
 
-// Based on Paul Akinyemi' "How to Build a Wordle Clone in JavaScript" article on freeCodeCamp
+// Inspired on Josh Wardle game and based on Paul Akinyemi' "How to Build a Wordle Clone in JavaScript" article on freeCodeCamp
 // https://www.freecodecamp.org/news/build-a-wordle-clone-in-javascript/
 
 const NUMBER_OF_GUESSES = 6;
@@ -50,10 +50,6 @@ function initKeyboard() {
         cont.appendChild(row);
     });
 }
-
-document.getElementsByTagName('body')[0].className = COLOR_THEME;
-initBoard();
-initKeyboard();
 
 document.addEventListener('keyup', (e) => {
     if (guessesRemaining === 0) {
@@ -105,7 +101,6 @@ function insertLetter(pressedKey) {
 function deleteLetter() {
     let row = document.getElementsByClassName('letter-row')[6 - guessesRemaining];
     let box = row.children[nextLetter - 1];
-    // animateCSS(box, 'bounceOut');
     box.textContent = '';
     box.dataset.state = 'empty';
     currentGuess.pop();
@@ -146,7 +141,7 @@ function checkGuess() {
         }
         let delay = 250 * i;
         setTimeout(() => {
-            animateCSS(box, 'flip', 250);
+            animateCSS(box, 'flip');
             box.dataset.state = letterState;
             shadeKeyboard(letter, letterState);
         }, delay);
@@ -185,6 +180,7 @@ function shadeKeyboard(letter, state) {
     }
 }
 
+// Animation CSS class injector
 const animateCSS = (element, animation, time = 250, prefix = 'animate__') =>
     new Promise((resolve, reject) => {
         const animationName = `${prefix}${animation}`;
@@ -200,5 +196,13 @@ const animateCSS = (element, animation, time = 250, prefix = 'animate__') =>
 
         node.addEventListener('animationend', handleAnimationEnd, { once: true });
     });
+
+//
+// INIIALIZE GAME
+//
+document.getElementsByTagName('body')[0].className = COLOR_THEME;
+toastr.options.positionClass = 'toast-top-center';
+initBoard();
+initKeyboard();
 
 // End of code.
