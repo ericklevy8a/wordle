@@ -356,12 +356,43 @@ function showHelp() {
 
 function showStats() {
     //wordleStats
+    let html = `
+    <div id="stats-container">
+        <h5>Statistics</h5>
+        <table id="stats-table">
+            <tr>
+                <td class="number">${wordleStats.gamesPlayed}</td>
+                <td class="number">${wordleStats.gamesWon}</td>
+                <td class="number">${Math.round(wordleStats.winPercentage)}</td>
+                <td class="number">${wordleStats.currentStreak}</td>
+                <td class="number">${wordleStats.maxStreak}</th>
+            </tr>
+            <tr>
+                <td class="label">Played</td>
+                <td class="label">Won</td>
+                <td class="label">% Won</td>
+                <td class="label">Current Streak</td>
+                <td class="label">Max Streak</td>
+            </tr>
+        </table>
+        <h5>Guess Distribution</h5>
+        <div id="stats-graph">`;
+    let maxGuesses = 0;
+    for (let i = 1; i <= NUMBER_OF_GUESSES; i++) { if (wordleStats.guesses[i] > maxGuesses) maxGuesses = wordleStats.guesses[i]; }
+    for (let i = 1; i <= NUMBER_OF_GUESSES; i++) {
+        let width = Math.round(wordleStats.guesses[i] / maxGuesses * 100);
+        html += `<div class="bar-outer"><span>${i}</span><div class="bar-inner" style="width: ${width}%">${wordleStats.guesses[i]}</div></div>`;
+    }
+    html += `
+        </div>
+    </div>`;
+    msgbox('', html);
 }
 
 function initNavBar() {
     document.getElementById('button-menu').addEventListener('click', () => { toastr.warning('Menu dialog is a work in progres...') });
     document.getElementById('button-help').addEventListener('click', showHelp);
-    document.getElementById('button-stats').addEventListener('click', () => { toastr.warning('Statistics dialog is a work in progres...') });
+    document.getElementById('button-stats').addEventListener('click', showStats);
     document.getElementById('button-setup').addEventListener('click', () => { toastr.warning('Settings dialog is a work in progres...') });
 }
 

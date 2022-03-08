@@ -177,7 +177,6 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
     color: inherit;
     background-color: inherit;
 }
-
 .green {
     background-color: var(--correct-bg-color);
 }
@@ -188,4 +187,51 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
     background-color: var(--absent-bg-color);
 }
 
+/* Some styling for stats dialog */
+#stats-container * {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+#stats-container h5 {
+    text-transform: uppercase;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+}
+#stats-table {
+    width: fit-content;
+    margin: 0 auto 1em auto;
+}
+#stats-table td {
+    width: 3em;
+    text-align: center;
+}
+#stats-table td.number {
+    font-size: 2.5em;
+    font-weight: 300;
+}
+#stats-table td.labels {
+    font-size: 1em;
+    font-weight: 100;
+}
+
+#stats-graph {
+    width: 100%;
+}
+#stats-graph .bar-outer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+#stats-graph .bar-outer span {
+    width: 24px;
+    text-align: right;
+    padding: 0 5px;
+}
+#stats-graph .bar-inner {
+    min-width: 1em;
+    background-color: #666;
+    text-align: right;
+    padding: 0px 5px;
+}
 /* End of code. */
