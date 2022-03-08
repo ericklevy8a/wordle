@@ -156,7 +156,36 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
 
 /* Adjust the top margin of toast container to leave space for the header height */
 #toast-container.toast-top-center {
-    top: 64px;
+    top: 54px;
+}
+
+/* Adjust some styling for modal dialogs */
+.fade {
+    font-family: "Poppins", sans-serif;
+}
+.modal-dialog {
+    color: #ccc !important;
+    background-color: #333 !important;
+    border: 1px solid white !important;
+    width: 400px;
+}
+.modal-dialog p,
+.modal-dialog h5 {
+    margin-bottom: 1em;
+}
+.modal-header, .modal-body, .modal-footer {
+    color: inherit;
+    background-color: inherit;
+}
+
+.green {
+    background-color: var(--correct-bg-color);
+}
+.yellow {
+    background-color: var(--present-bg-color);
+}
+.darkgrey {
+    background-color: var(--absent-bg-color);
 }
 
 /* End of code. */

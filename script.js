@@ -1,16 +1,23 @@
+//
 // Wordle Clone Script
+//
 
-// Inspired on Josh Wardle game and based on Paul Akinyemi' "How to Build a Wordle Clone in JavaScript" article on freeCodeCamp
+// Inspired on Josh Wardle game
+// https://www.nytimes.com/games/wordle/index.html
+// Based on Paul Akinyemi' "How to Build a Wordle Clone in JavaScript" article on freeCodeCamp
 // https://www.freecodecamp.org/news/build-a-wordle-clone-in-javascript/
 
 const NUMBER_OF_GUESSES = 6;
 
-const COLOR_THEME = 'dark';
-
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let nextLetter = 0;
+
 let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
+
+let wordleState = getWordleState() || false;
+let wordleStats = getWordleStats() || false;
+let wordleConfig = false;
 
 function initBoard() {
     let board = document.getElementById('game-board');
@@ -89,7 +96,7 @@ function insertLetter(pressedKey) {
         return;
     }
     pressedKey = pressedKey.toLowerCase();
-    let row = document.getElementsByClassName('letter-row')[6 - guessesRemaining];
+    let row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     let box = row.children[nextLetter];
     animateCSS(box, 'bounceIn');
     box.textContent = pressedKey;
@@ -99,7 +106,7 @@ function insertLetter(pressedKey) {
 }
 
 function deleteLetter() {
-    let row = document.getElementsByClassName('letter-row')[6 - guessesRemaining];
+    let row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     let box = row.children[nextLetter - 1];
     box.textContent = '';
     box.dataset.state = 'empty';
@@ -108,22 +115,23 @@ function deleteLetter() {
 }
 
 function checkGuess() {
-    let row = document.getElementsByClassName('letter-row')[6 - guessesRemaining];
+    let row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     let guessString = '';
     let rightGuess = Array.from(rightGuessString);
     for (const val of currentGuess) {
         guessString += val;
     }
     if (guessString.length != 5) {
-        animateCSS(row, 'flash');
         toastr.error('Not enough letters!');
+        animateCSS(row, 'flash');
         return;
     }
     if (!WORDS.includes(guessString)) {
-        animateCSS(row, 'shakeX');
         toastr.error('Word not in list!');
+        animateCSS(row, 'shakeX');
         return;
     }
+    if (wordleState) wordleState.evaluations[NUMBER_OF_GUESSES - guessesRemaining] = [];
     for (let i = 0; i < 5; i++) {
         let letterState = '';
         let box = row.children[i];
@@ -145,9 +153,34 @@ function checkGuess() {
             box.dataset.state = letterState;
             shadeKeyboard(letter, letterState);
         }, delay);
+        // Update game state
+        if (wordleState) {
+            wordleState.evaluations[NUMBER_OF_GUESSES - guessesRemaining].push(letterState);
+        }
     }
+    // Update game state
+    if (wordleState) {
+        wordleState.boardState[NUMBER_OF_GUESSES - guessesRemaining] = currentGuess.join('');
+    }
+    // Check for game over condition
     if (guessString === rightGuessString) {
         toastr.success('You guessed right! Game over!');
+        // Update statistics and store
+        if (wordleStats) {
+            wordleStats.gamesPlayed += 1;
+            wordleStats.gamesWon += 1;
+            wordleStats.guesses[NUMBER_OF_GUESSES - guessesRemaining + 1] += 1;
+            wordleStats.averageGuesses = averageGuesses();
+            wordleStats.currentStreak += 1;
+            wordleStats.maxStreak = Math.max(wordleStats.maxStreak, wordleStats.currentStreak)
+            wordleStats.winPercentage = wordleStats.gamesWon / wordleStats.gamesPlayed * 100;
+            storeWordleStats();
+        }
+        // Update game state and store
+        if (wordleState) {
+            wordleState.gameStatus = 'WIN';
+            storeWordleState();
+        }
         guessesRemaining = 0;
         return;
     } else {
@@ -157,8 +190,25 @@ function checkGuess() {
         if (guessesRemaining === 0) {
             toastr.error('You\'ve run out of guesses! Game over!');
             toastr.info(`The right word was: "${rightGuessString}"`);
+            // Update statistics and store
+            if (wordleStats) {
+                wordleStats.gamesPlayed += 1;
+                wordleStats.guesses.fail += 1;
+                wordleStats.currentStreak = 0;
+                wordleStats.winPercentage = wordleStats.gamesWon / wordleStats.gamesPlayed * 100;
+                storeWordleStats();
+            }
+            // Update game state and store
+            if (wordleState) {
+                wordleState.gameStatus = 'LOST';
+                storeWordleState();
+            }
+            return;
         }
+        if (wordleState) wordleState.rowIndex += 1;
     }
+    // Store game state
+    if (wordleState) storeWordleState();
 }
 
 function shadeKeyboard(letter, state) {
@@ -197,12 +247,129 @@ const animateCSS = (element, animation, time = 250, prefix = 'animate__') =>
         node.addEventListener('animationend', handleAnimationEnd, { once: true });
     });
 
-//
-// INIIALIZE GAME
-//
-document.getElementsByTagName('body')[0].className = COLOR_THEME;
+// LOCAL STORAGE FUNCTIONS
+
+function restoreWordleState() {
+    if (wordleState) {
+        if (wordleState.gameStatus === 'IN_PROGRESS') {
+            rightGuessString = wordleState.solution;
+            for (let i = 0; i < wordleState.rowIndex; i++) {
+                let row = document.getElementsByClassName('letter-row')[i];
+                for (let j = 0; j < 5; j++) {
+                    let box = row.children[j];
+                    let letter = wordleState.boardState[i][j];
+                    let letterState = wordleState.evaluations[i][j];
+                    box.textContent = letter;
+                    box.dataset.state = letterState;
+                    shadeKeyboard(letter, letterState);
+                }
+            }
+            guessesRemaining = NUMBER_OF_GUESSES - wordleState.rowIndex;
+        } else {
+            // TODO: Check game countdown clock to reset
+            // Meanwhile, reset game state ever not IN_PROGRESS
+            wordleState.solution = rightGuessString;
+            wordleState.gameStatus = 'IN_PROGRESS';
+            wordleState.rowIndex = 0;
+            wordleState.boardState = ['', '', '', '', '', ''];
+            wordleState.evaluations = [null, null, null, null, null, null];
+            storeWordleState();
+        }
+    }
+}
+
+
+function getWordleState() {
+    if (typeof (Storage) !== 'undefined') {
+        return JSON.parse(localStorage.getItem('wordle-state')) ||
+        {
+            boardState: ["", "", "", "", "", ""],
+            evaluations: [null, null, null, null, null, null],
+            gameStatus: "",
+            rowIndex: 0,
+            solution: ""
+        }
+    }
+}
+
+function storeWordleState() {
+    if (typeof (Storage) !== 'undefined') {
+        localStorage.setItem('wordle-state', JSON.stringify(wordleState));
+    }
+}
+
+function getWordleStats() {
+    if (typeof (Storage) !== 'undefined') {
+        return JSON.parse(localStorage.getItem('wordle-stats')) ||
+        {
+            gamesPlayed: 0,
+            gamesWon: 0,
+            guesses: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0 },
+            averageGuesses: 0.0,
+            currentStreak: 0,
+            maxStreak: 0,
+            winPercentage: 0.0
+        }
+    }
+}
+
+function storeWordleStats() {
+    if (typeof (Storage) !== 'undefined') {
+        localStorage.setItem('wordle-stats', JSON.stringify(wordleStats));
+    }
+}
+
+function averageGuesses() {
+    if (wordleStats) {
+        let games = 0;
+        let guesses = 0;
+        for (let i = 1; i <= NUMBER_OF_GUESSES; i++) {
+            games += wordleStats.guesses[i];
+            guesses += i * wordleStats.guesses[i];
+        }
+        if (games > 0) {
+            return guesses / games;
+        }
+    }
+    return 0.0;
+}
+
+// NAV BAR ACTIONS
+
+function showHelp() {
+    let msg = '<p>© Copyright 2022 by Erick Levy!</p>';
+    msg += '<h5>MY OWN WORDLE CLONE GAME!</h5>';
+    msg += '<p>Inspired on Josh Wardle game, ';
+    msg += 'and based on Paul Akinyemi\'s article on freeCodeCamp "How to Build a Wordle Clone in JavaScript".</p>';
+    msg += '<h5>HOW TO PLAY</h5>';
+    msg += '<p>Guess the word in six tries or less.</p>';
+    msg += '<p>Each guess must be a valid five-letter word.</p>';
+    msg += '<p>Use the Enter key to evaluate the word or Del/Backspace key to make corrections.</p>';
+    msg += '<p>With each guess, the color of the tiles and keys will change to show how close your guess was to the right word.</p>';
+    msg += '<p><span class="green"><b>Green</b></span>: letter is in the correct spot.<br>';
+    msg += '<span class="yellow"><b>Yellow</b></span>: letter is in the word but in the wrong spot.<br>';
+    msg += '<span class="darkgrey"><b>Dark grey</b></span>: letter is not in the word in any spot.</p>';
+    msg += '<h5>ADVICE</h5><p>This is a work in progress. Check for a TO DO list in the GitHub repository readme.md file.</p>';
+    msg += '<p>Thank you for taking the time to learn about and play with this little app.</p>';
+    msgbox('About the Game', msg);
+}
+
+function showStats() {
+    //wordleStats
+}
+
+function initNavBar() {
+    document.getElementById('button-menu').addEventListener('click', () => { toastr.warning('Menu dialog is a work in progres...') });
+    document.getElementById('button-help').addEventListener('click', showHelp);
+    document.getElementById('button-stats').addEventListener('click', () => { toastr.warning('Statistics dialog is a work in progres...') });
+    document.getElementById('button-setup').addEventListener('click', () => { toastr.warning('Settings dialog is a work in progres...') });
+}
+
+// INITIALIZE GAME
 toastr.options.positionClass = 'toast-top-center';
+initNavBar();
 initBoard();
 initKeyboard();
+restoreWordleState();
 
 // End of code.
