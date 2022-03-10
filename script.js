@@ -17,7 +17,7 @@ let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 
 let wordleState = getWordleState() || false;
 let wordleStats = getWordleStats() || false;
-let wordleConfig = false;
+let wordleSettings = getWordleSettings() || false;
 
 function initBoard() {
     let board = document.getElementById('game-board');
@@ -39,7 +39,7 @@ function initKeyboard() {
     let layout = {
         'first-row': 'q w e r t y u i o p',
         'second-row': 'a s d f g h j k l',
-        'third-row': 'Del z x c v b n m Enter'
+        'third-row': 'Enter z x c v b n m Del'
     };
     let keys = Object.keys(layout);
     keys.forEach(group => {
@@ -51,11 +51,13 @@ function initKeyboard() {
             let button = document.createElement('button');
             button.className = 'keyboard-button';
             button.dataset.state = 'normal';
+            button.dataset.key = key;
             button.innerText = key;
             row.appendChild(button);
         });
         cont.appendChild(row);
     });
+    document.querySelector('.keyboard-button[data-key="Del"]').innerHTML = '<i class="material-icons no-pointer-events">backspace</i>';
 }
 
 document.addEventListener('keyup', (e) => {
@@ -84,7 +86,7 @@ document.getElementById('keyboard-cont').addEventListener('click', (e) => {
     if (!target.classList.contains('keyboard-button')) {
         return;
     }
-    let key = target.textContent;
+    let key = target.dataset.key;
     if (key === 'Del') {
         key = 'Backspace';
     }
@@ -169,7 +171,8 @@ function checkGuess() {
         if (wordleStats) {
             wordleStats.gamesPlayed += 1;
             wordleStats.gamesWon += 1;
-            wordleStats.guesses[NUMBER_OF_GUESSES - guessesRemaining + 1] += 1;
+            wordleStats.highlight = NUMBER_OF_GUESSES - guessesRemaining + 1;
+            wordleStats.guesses[wordleStats.highlight] += 1;
             wordleStats.averageGuesses = averageGuesses();
             wordleStats.currentStreak += 1;
             wordleStats.maxStreak = Math.max(wordleStats.maxStreak, wordleStats.currentStreak)
@@ -182,6 +185,8 @@ function checkGuess() {
             storeWordleState();
         }
         guessesRemaining = 0;
+        // Show statistics
+        setTimeout(showStats, 3000);
         return;
     } else {
         guessesRemaining -= 1;
@@ -194,6 +199,7 @@ function checkGuess() {
             if (wordleStats) {
                 wordleStats.gamesPlayed += 1;
                 wordleStats.guesses.fail += 1;
+                wordleStats.highlight = 0;
                 wordleStats.currentStreak = 0;
                 wordleStats.winPercentage = wordleStats.gamesWon / wordleStats.gamesPlayed * 100;
                 storeWordleStats();
@@ -334,54 +340,81 @@ function averageGuesses() {
     return 0.0;
 }
 
+function getWordleSettings() {
+    if (typeof (Storage) !== 'undefined') {
+        return JSON.parse(localStorage.getItem('wordle-settings')) ||
+        {
+            hardMode: false,
+            darkTheme: false,
+            highContrast: false
+        }
+    }
+}
+
+function storeWordleSettings(wordleSettings) {
+    if (typeof (Storage) !== 'undefined') {
+        localStorage.setItem('wordle-settings', JSON.stringify(wordleSettings));
+    }
+}
+
 // NAV BAR ACTIONS
 
 function showHelp() {
-    let msg = '<p>© Copyright 2022 by Erick Levy!</p>';
-    msg += '<h5>MY OWN WORDLE CLONE GAME!</h5>';
-    msg += '<p>Inspired on Josh Wardle game, ';
-    msg += 'and based on Paul Akinyemi\'s article on freeCodeCamp "How to Build a Wordle Clone in JavaScript".</p>';
-    msg += '<h5>HOW TO PLAY</h5>';
-    msg += '<p>Guess the word in six tries or less.</p>';
-    msg += '<p>Each guess must be a valid five-letter word.</p>';
-    msg += '<p>Use the Enter key to evaluate the word or Del/Backspace key to make corrections.</p>';
-    msg += '<p>With each guess, the color of the tiles and keys will change to show how close your guess was to the right word.</p>';
-    msg += '<p><span class="green"><b>Green</b></span>: letter is in the correct spot.<br>';
-    msg += '<span class="yellow"><b>Yellow</b></span>: letter is in the word but in the wrong spot.<br>';
-    msg += '<span class="darkgrey"><b>Dark grey</b></span>: letter is not in the word in any spot.</p>';
-    msg += '<h5>ADVICE</h5><p>This is a work in progress. Check for a TO DO list in the GitHub repository readme.md file.</p>';
-    msg += '<p>Thank you for taking the time to learn about and play with this little app.</p>';
-    msgbox('About the Game', msg);
+    let msg = `
+        <div id="help-container">
+            <h5>HOW TO PLAY</h5>
+            <p>Guess the word in six tries or less.</p>
+            <p>Each guess must be a valid five-letter word.</p>
+            <p>Use the Enter key to evaluate the word or Del/Backspace key to make corrections.</p>
+            <p>With each guess, the color of the tiles and keys will change to show how close your guess was to the right word.</p>
+            <p><span class="green"><b>Green</b></span>: letter is in the correct spot.<br>
+            <span class="yellow"><b>Yellow</b></span>: letter is in the word but in the wrong spot.<br>
+            <span class="darkgrey"><b>Greyish</b></span>: letter is not in the word in any spot.</p>
+            <h5>ABOUT THIS GAME</h5>
+            <p>© Copyright 2022 by Erick Levy!</p>
+            <p>Inspired on Josh Wardle game and based on Paul Akinyemi\'s article on freeCodeCamp "How to Build a Wordle Clone in JavaScript".</p>
+            <p>Thank you for taking the time to learn about and play with this little app.</p>
+            <h5>ADVICE</h5>
+            <p>This is a work in progress. Check for a TO DO list in the GitHub repository readme.md file.</p>
+        </div>
+    `;
+    msgbox('', msg);
 }
 
 function showStats() {
-    //wordleStats
     let html = `
-    <div id="stats-container">
-        <h5>Statistics</h5>
-        <table id="stats-table">
-            <tr>
-                <td class="number">${wordleStats.gamesPlayed}</td>
-                <td class="number">${wordleStats.gamesWon}</td>
-                <td class="number">${Math.round(wordleStats.winPercentage)}</td>
-                <td class="number">${wordleStats.currentStreak}</td>
-                <td class="number">${wordleStats.maxStreak}</th>
-            </tr>
-            <tr>
-                <td class="label">Played</td>
-                <td class="label">Won</td>
-                <td class="label">% Won</td>
-                <td class="label">Current Streak</td>
-                <td class="label">Max Streak</td>
-            </tr>
-        </table>
-        <h5>Guess Distribution</h5>
-        <div id="stats-graph">`;
+        <div id="stats-container">
+            <h5>Statistics</h5>
+            <table id="stats-table">
+                <tr>
+                    <td class="number">${wordleStats.gamesPlayed}</td>
+                    <td class="number">${wordleStats.gamesWon}</td>
+                    <td class="number">${Math.round(wordleStats.winPercentage)}</td>
+                    <td class="number">${wordleStats.currentStreak}</td>
+                    <td class="number">${wordleStats.maxStreak}</th>
+                </tr>
+                <tr>
+                    <td class="label">Played</td>
+                    <td class="label">Won</td>
+                    <td class="label">Win %</td>
+                    <td class="label">Current Streak</td>
+                    <td class="label">Max Streak</td>
+                </tr>
+            </table>
+            <h5>Guess Distribution</h5>
+            <div id="stats-graph">`;
     let maxGuesses = 0;
-    for (let i = 1; i <= NUMBER_OF_GUESSES; i++) { if (wordleStats.guesses[i] > maxGuesses) maxGuesses = wordleStats.guesses[i]; }
+    for (let i = 1; i <= NUMBER_OF_GUESSES; i++) {
+        if (wordleStats.guesses[i] > maxGuesses) maxGuesses = wordleStats.guesses[i];
+    }
     for (let i = 1; i <= NUMBER_OF_GUESSES; i++) {
         let width = Math.round(wordleStats.guesses[i] / maxGuesses * 100);
-        html += `<div class="bar-outer"><span>${i}</span><div class="bar-inner" style="width: ${width}%">${wordleStats.guesses[i]}</div></div>`;
+        let highlight = (wordleStats.highlight == i) ? 'highlight' : '';
+        html += `
+            <div class="bar-outer">
+                <span>${i}</span>
+                <div class="bar-inner ${highlight}" style="width: ${width}%">${wordleStats.guesses[i]}</div>
+            </div>`;
     }
     html += `
         </div>
@@ -389,15 +422,76 @@ function showStats() {
     msgbox('', html);
 }
 
+function showSettings() {
+    let html = `
+        <div id="settings-container">
+            <h5>Settings</h5>
+            <div class="setting">
+                <div class="Text">
+                    <div class="title">Hard Mode</div>
+                    <div class="description">Any revealed hints must be used in subsequent guesses</div>
+                </div>
+                <div class="control">
+                    <div class="switch" id="hard-mode" name="hardMode" ${wordleSettings.hardMode ? 'checked' : ''}>
+                        <span class="knob"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting">
+                <div class="Text">
+                    <div class="title">Dark Theme</div>
+                </div>
+                <div class="control">
+                    <div class="switch" id="dark-theme" name="darkTheme" ${wordleSettings.darkTheme ? 'checked' : ''}>
+                        <div class="knob">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting">
+                <div class="Text">
+                    <div class="title">High Contrast</div>
+                    <div class="description">For improved color vision</div>
+                </div>
+                <div class="control">
+                    <div class="switch" id="high-contrast" name="highContrast" ${wordleSettings.highContrast ? 'checked' : ''}>
+                        <span class="knob"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>`;
+    msgbox('', html);
+    document.getElementById('settings-container').addEventListener('click', (e) => {
+        let target = e.target;
+        let name = target.getAttribute('name');
+        let checked = target.getAttribute('checked');
+
+        if (checked === null) {
+            if (name == 'darkTheme') { document.body.classList.add('dark'); }
+            wordleSettings[name] = true;
+            target.setAttribute('checked', '');
+        } else {
+            if (name == 'darkTheme') { document.body.classList.remove('dark'); }
+            wordleSettings[name] = false;
+            target.removeAttribute('checked');
+        }
+        storeWordleSettings(wordleSettings);
+    });
+}
+
 function initNavBar() {
     document.getElementById('button-menu').addEventListener('click', () => { toastr.warning('Menu dialog is a work in progres...') });
     document.getElementById('button-help').addEventListener('click', showHelp);
     document.getElementById('button-stats').addEventListener('click', showStats);
-    document.getElementById('button-setup').addEventListener('click', () => { toastr.warning('Settings dialog is a work in progres...') });
+    document.getElementById('button-settings').addEventListener('click', showSettings);
 }
 
-// INITIALIZE GAME
+// Some UI adjustments
 toastr.options.positionClass = 'toast-top-center';
+
+// INITIALIZE GAME
 initNavBar();
 initBoard();
 initKeyboard();

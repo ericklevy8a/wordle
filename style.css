@@ -114,9 +114,6 @@ button.material-icons {
     flex:0.5;
 }
 
-.third-row button:first-child { flex: 1.15; }
-.third-row button:last-child { flex: 1.75; }
-
 .keyboard-button {
     font-size: 1rem;
     font-weight: bold;
@@ -134,10 +131,15 @@ button.material-icons {
     text-transform: uppercase;
 }
 
-button[data-state='normal'] { color: var(--button-color); background-color: var(--button-bg-color); }
-button[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
-button[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
-button[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
+.keyboard-button[data-key="Enter"] { flex: 1.75; }
+.keyboard-button[data-key="Del"] { flex: 1.75; }
+
+.keyboard-button[data-state='normal'] { color: var(--button-color); background-color: var(--button-bg-color); }
+.keyboard-button[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
+.keyboard-button[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
+.keyboard-button[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
+
+.no-pointer-events { pointer-events: none; }
 
 @media (min-width: 500px) {
     #keyboard-cont div {
@@ -164,9 +166,9 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
     font-family: "Poppins", sans-serif;
 }
 .modal-dialog {
-    color: #ccc !important;
-    background-color: #333 !important;
-    border: 1px solid white !important;
+    color: var(--default-color) !important;
+    background-color: var(--default-bg-color) !important;
+    border: 1px solid var(--default-color) !important;
     width: 400px;
 }
 .modal-dialog p,
@@ -174,8 +176,8 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
     margin-bottom: 1em;
 }
 .modal-header, .modal-body, .modal-footer {
-    color: inherit;
-    background-color: inherit;
+    color: inherit !important;
+    background-color: inherit !important;
 }
 .green {
     background-color: var(--correct-bg-color);
@@ -188,10 +190,10 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
 }
 
 /* Some styling for stats dialog */
-#stats-container * {
+.modal-body * {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
-#stats-container h5 {
+.modal-body h5 {
     text-transform: uppercase;
     text-align: center;
     font-size: large;
@@ -202,36 +204,94 @@ button[data-state='correct'] { color: var(--guessed-color); background-color: va
     margin: 0 auto 1em auto;
 }
 #stats-table td {
-    width: 3em;
+    width: 1em;
     text-align: center;
+    vertical-align: top;
+    padding: 0 16px;
 }
 #stats-table td.number {
     font-size: 2.5em;
     font-weight: 300;
 }
-#stats-table td.labels {
-    font-size: 1em;
-    font-weight: 100;
+#stats-table td.label {
+    font-size: 12px;
+    font-weight: 300;
 }
-
 #stats-graph {
     width: 100%;
 }
 #stats-graph .bar-outer {
     width: 100%;
+    line-height: 24px;
     display: flex;
     flex-direction: row;
     margin-bottom: 5px;
 }
 #stats-graph .bar-outer span {
-    width: 24px;
-    text-align: right;
-    padding: 0 5px;
+    width: 1em;
+    text-align: end;
+    margin-right: 5px;
 }
 #stats-graph .bar-inner {
-    min-width: 1em;
+    min-width: 19px;
+    line-height: 24px;
+    color: var(--guessed-color);
     background-color: #666;
     text-align: right;
     padding: 0px 5px;
 }
+#stats-graph .highlight {
+    color: var(--guessed-color);
+    background-color: var(--correct-bg-color);
+}
+
+/* Styling for settings dialog */
+.setting {
+    align-items: center;
+    border-bottom: 1px solid #555;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 16px 0;
+}
+.setting .title {
+    color: var(--default-color);
+    display: block;
+    font-size: 18px;
+}
+.setting .description {
+    color: var(--default-color);
+    filter: brightness(0.5);
+    display: block;
+    font-size: 12px;
+}
+.setting .switch {
+    background-color: #555;
+    height: 20px;
+    width: 32px;
+    padding: 2px;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+.setting .switch[checked] {
+    background-color: var(--correct-bg-color);
+}
+.setting .switch .knob {
+    display: block;
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    left: 2px;
+    right: auto;
+    border-radius: 8px;
+    background-color: white;
+    transition: all 250ms;
+    pointer-events: none;
+}
+.setting .switch[checked] .knob {
+    right: 2px;
+    left: auto;
+}
+
 /* End of code. */

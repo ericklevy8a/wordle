@@ -109,6 +109,7 @@
 }
 
 .modal .modal-footer button {
+    cursor: pointer;
     color: var(--modal-button-color);
     background-color: var(--modal-button-bg-color);
     padding: 8px;
