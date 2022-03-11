@@ -131,6 +131,28 @@ function checkGuess() {
         animateCSS(row, 'flash');
         return;
     }
+    // In hard mode, checks that previus revealed hints has been used
+    if (wordleSettings.hardMode) {
+        let correctButtons = document.getElementsByClassName('keyboard-button correct');
+        let presentNuttons = document.getElementsByClassName('keyboard-button present');
+        let buttons = [...correctButtons, ...presentNuttons];
+        let keys = [];
+        buttons.forEach(element => {
+            keys.push(element.dataset.key);
+        });
+        let flag = false;
+        for (let i = 0; i < keys.length; i++) {
+            if (!currentGuess.includes(keys[i])) {
+                flag = true;
+            }
+        }
+        if (flag) {
+            toastr.error('In hard mode, any revealed hint must be used!');
+            animateCSS(row, 'flash');
+            return;
+        }
+    }
+    // Check the guess is a valid word (in dictionary)
     if (!WORDS.includes(guessString)) {
         toastr.error('Word not in list!');
         animateCSS(row, 'shakeX');
@@ -436,7 +458,7 @@ function showSettings() {
                     <div class="description">Any revealed hints must be used in subsequent guesses</div>
                 </div>
                 <div class="control">
-                    <div class="switch" id="hard-mode" name="hardMode" ${wordleSettings.hardMode ? 'checked' : ''}>
+                    <div class="switch" id="hard-mode" name="hard-mode" ${wordleSettings.hardMode ? 'checked' : ''}>
                         <span class="knob"></span>
                     </div>
                 </div>
@@ -472,6 +494,14 @@ function showSettings() {
         let target = e.target;
         let name = target.getAttribute('name');
         let checked = (target.getAttribute('checked') == null);
+        if (name == 'hard-mode') {
+            wordleSettings.hardMode = checked;
+            if (checked) {
+                target.setAttribute('checked', '');
+            } else {
+                target.removeAttribute('checked');
+            }
+        }
         if (name == 'dark-theme') {
             wordleSettings.darkTheme = checked;
             if (checked) {
