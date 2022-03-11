@@ -1,5 +1,8 @@
 /* STYLES FOR THE WORDLE CLONE */
 
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons+Outlined);
+
 html * {
     margin: 0;
     padding: 0;
@@ -9,14 +12,32 @@ html * {
 :root {
     --default-color: black;
     --default-bg-color: white;
-    --box-border-color: #ddd;
-    --box-filled-color: #888;
+    --tile-border-color: #ddd;
+    --tile-filled-border-color: #888;
     --button-color: black;
     --button-bg-color: #ccc;
     --guessed-color: white;
     --absent-bg-color: #888;
     --present-bg-color: #dc6;
     --correct-bg-color: #6a6;
+}
+
+.dark-theme {
+    --default-color: white;
+    --default-bg-color: black;
+    --tile-border-color: #333;
+    --tile-filled-border-color: #666;
+    --button-color: white;
+    --button-bg-color: #888;
+    --guessed-color: white;
+    --absent-bg-color: #444;
+    --present-bg-color: #ba4;
+    --correct-bg-color: #595;
+}
+
+.high-contrast {
+    --present-bg-color: #8ce !important;
+    --correct-bg-color: #e63 !important;
 }
 
 body {
@@ -27,19 +48,6 @@ body {
     justify-content: space-between;
     color: var(--default-color);
     background-color: var(--default-bg-color);
-}
-
-.dark {
-    --default-color: white;
-    --default-bg-color: black;
-    --box-border-color: #333;
-    --box-filled-color: #666;
-    --button-color: white;
-    --button-bg-color: #999;
-    --guessed-color: white;
-    --absent-bg-color: #555;
-    --present-bg-color: #ba4;
-    --correct-bg-color: #595;
 }
 
 header {
@@ -90,8 +98,8 @@ button.material-icons {
     font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
-.letter-box[data-state='empty'] { border: 2px solid var(--box-border-color); }
-.letter-box[data-state='filled'] { border: 2px solid var(--box-filled-color); color: var(--default-color); }
+.letter-box[data-state='empty'] { border: 2px solid var(--tile-border-color); }
+.letter-box[data-state='filled'] { border: 2px solid var(--tile-filled-border-color); color: var(--default-color); }
 .letter-box[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
 .letter-box[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
 .letter-box[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
@@ -207,7 +215,7 @@ button.material-icons {
     width: 1em;
     text-align: center;
     vertical-align: top;
-    padding: 0 16px;
+    padding: 0 8px;
 }
 #stats-table td.number {
     font-size: 2.5em;
@@ -225,20 +233,20 @@ button.material-icons {
     line-height: 24px;
     display: flex;
     flex-direction: row;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 #stats-graph .bar-outer span {
     width: 1em;
     text-align: end;
-    margin-right: 5px;
+    margin-right: 4px;
 }
 #stats-graph .bar-inner {
     min-width: 19px;
     line-height: 24px;
     color: var(--guessed-color);
-    background-color: #666;
+    background-color: var(--absent-bg-color);
     text-align: right;
-    padding: 0px 5px;
+    padding: 0px 4px;
 }
 #stats-graph .highlight {
     color: var(--guessed-color);

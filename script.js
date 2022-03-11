@@ -19,6 +19,9 @@ let wordleState = getWordleState() || false;
 let wordleStats = getWordleStats() || false;
 let wordleSettings = getWordleSettings() || false;
 
+if (wordleSettings.darkTheme) document.body.classList.add('dark-theme');
+if (wordleSettings.highContrast) document.body.classList.add('high-contrast');
+
 function initBoard() {
     let board = document.getElementById('game-board');
     for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
@@ -57,7 +60,7 @@ function initKeyboard() {
         });
         cont.appendChild(row);
     });
-    document.querySelector('.keyboard-button[data-key="Del"]').innerHTML = '<i class="material-icons no-pointer-events">backspace</i>';
+    document.querySelector('.keyboard-button[data-key="Del"]').innerHTML = '<i class="material-icons-outlined no-pointer-events">backspace</i>';
 }
 
 document.addEventListener('keyup', (e) => {
@@ -133,35 +136,38 @@ function checkGuess() {
         animateCSS(row, 'shakeX');
         return;
     }
-    if (wordleState) wordleState.evaluations[NUMBER_OF_GUESSES - guessesRemaining] = [];
+    let evaluations = [null, null, null, null, null];
+    // Check first correct cases only to avoid a repeated letter discrepancy
     for (let i = 0; i < 5; i++) {
-        let letterState = '';
+        if (currentGuess[i] === rightGuess[i]) {
+            evaluations[i] = 'correct';
+            rightGuess[i] = '#'; // obfuscate this correct case
+        }
+    }
+    // Check present and absent cases
+    for (let i = 0; i < 5; i++) {
+        if (evaluations[i] !== 'correct') {
+            if (rightGuess.indexOf(currentGuess[i]) === -1) {
+                evaluations[i] = 'absent';
+            } else {
+                evaluations[i] = 'present';
+            }
+        }
+    }
+    // Display the evaluation results
+    for (let i = 0; i < 5; i++) {
         let box = row.children[i];
         let letter = currentGuess[i];
-        let letterPosition = rightGuess.indexOf(currentGuess[i]);
-        if (letterPosition === -1) {
-            letterState = 'absent';
-        } else {
-            if (currentGuess[i] === rightGuess[i]) {
-                letterState = 'correct';
-            } else {
-                letterState = 'present';
-            }
-            rightGuess[letterPosition] = '#';
-        }
         let delay = 250 * i;
         setTimeout(() => {
             animateCSS(box, 'flip');
-            box.dataset.state = letterState;
-            shadeKeyboard(letter, letterState);
+            box.dataset.state = evaluations[i];
+            shadeKeyboard(letter, evaluations[i]);
         }, delay);
-        // Update game state
-        if (wordleState) {
-            wordleState.evaluations[NUMBER_OF_GUESSES - guessesRemaining].push(letterState);
-        }
     }
     // Update game state
     if (wordleState) {
+        wordleState.evaluations[NUMBER_OF_GUESSES - guessesRemaining] = evaluations;
         wordleState.boardState[NUMBER_OF_GUESSES - guessesRemaining] = currentGuess.join('');
     }
     // Check for game over condition
@@ -441,9 +447,10 @@ function showSettings() {
             <div class="setting">
                 <div class="Text">
                     <div class="title">Dark Theme</div>
+                    <div class="description">Reduce luminance to ergonmy levels</div>
                 </div>
                 <div class="control">
-                    <div class="switch" id="dark-theme" name="darkTheme" ${wordleSettings.darkTheme ? 'checked' : ''}>
+                    <div class="switch" id="dark-theme" name="dark-theme" ${wordleSettings.darkTheme ? 'checked' : ''}>
                         <div class="knob">&nbsp;</div>
                     </div>
                 </div>
@@ -455,7 +462,7 @@ function showSettings() {
                     <div class="description">For improved color vision</div>
                 </div>
                 <div class="control">
-                    <div class="switch" id="high-contrast" name="highContrast" ${wordleSettings.highContrast ? 'checked' : ''}>
+                    <div class="switch" id="high-contrast" name="high-contrast" ${wordleSettings.highContrast ? 'checked' : ''}>
                         <span class="knob"></span>
                     </div>
                 </div>
@@ -466,16 +473,26 @@ function showSettings() {
     document.getElementById('settings-container').addEventListener('click', (e) => {
         let target = e.target;
         let name = target.getAttribute('name');
-        let checked = target.getAttribute('checked');
-
-        if (checked === null) {
-            if (name == 'darkTheme') { document.body.classList.add('dark'); }
-            wordleSettings[name] = true;
-            target.setAttribute('checked', '');
-        } else {
-            if (name == 'darkTheme') { document.body.classList.remove('dark'); }
-            wordleSettings[name] = false;
-            target.removeAttribute('checked');
+        let checked = (target.getAttribute('checked') == null);
+        if (name == 'dark-theme') {
+            wordleSettings.darkTheme = checked;
+            if (checked) {
+                document.body.classList.add('dark-theme');
+                target.setAttribute('checked', '');
+            } else {
+                document.body.classList.remove('dark-theme');
+                target.removeAttribute('checked');
+            }
+        }
+        if (name == 'high-contrast') {
+            wordleSettings.highContrast = checked;
+            if (checked) {
+                document.body.classList.add('high-contrast');
+                target.setAttribute('checked', '');
+            } else {
+                document.body.classList.remove('high-contrast');
+                target.removeAttribute('checked');
+            }
         }
         storeWordleSettings(wordleSettings);
     });
