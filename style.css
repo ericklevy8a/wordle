@@ -187,13 +187,25 @@ button.material-icons {
     color: inherit !important;
     background-color: inherit !important;
 }
-.green {
+.sample {
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin: 2px;
+
+}
+.correct {
     background-color: var(--correct-bg-color);
 }
-.yellow {
+.present {
     background-color: var(--present-bg-color);
 }
-.darkgrey {
+.absent {
     background-color: var(--absent-bg-color);
 }
 

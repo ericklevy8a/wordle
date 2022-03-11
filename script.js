@@ -371,17 +371,15 @@ function showHelp() {
             <h5>HOW TO PLAY</h5>
             <p>Guess the word in six tries or less.</p>
             <p>Each guess must be a valid five-letter word.</p>
-            <p>Use the Enter key to evaluate the word or Del/Backspace key to make corrections.</p>
+            <p>Use the Enter key to evaluate the word or Backspace key to make corrections.</p>
             <p>With each guess, the color of the tiles and keys will change to show how close your guess was to the right word.</p>
-            <p><span class="green"><b>Green</b></span>: letter is in the correct spot.<br>
-            <span class="yellow"><b>Yellow</b></span>: letter is in the word but in the wrong spot.<br>
-            <span class="darkgrey"><b>Greyish</b></span>: letter is not in the word in any spot.</p>
+            <p><span class="sample correct">C</span>: letter is in the correct spot.<br>
+            <span class="sample present">P</span>: letter is in the word but in the wrong spot.<br>
+            <span class="sample absent">A</span>: letter is not in the word in any spot.</p>
             <h5>ABOUT THIS GAME</h5>
             <p>© Copyright 2022 by Erick Levy!</p>
             <p>Inspired on Josh Wardle game and based on Paul Akinyemi\'s article on freeCodeCamp "How to Build a Wordle Clone in JavaScript".</p>
             <p>Thank you for taking the time to learn about and play with this little app.</p>
-            <h5>ADVICE</h5>
-            <p>This is a work in progress. Check for a TO DO list in the GitHub repository readme.md file.</p>
         </div>
     `;
     msgbox('', msg);
