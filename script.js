@@ -1,5 +1,6 @@
 //
 // Wordle Clone Script
+// (c) 2022 by Erick Levy!
 //
 
 // Inspired on Josh Wardle game
@@ -9,19 +10,24 @@
 
 const NUMBER_OF_GUESSES = 6;
 
+// Global vars
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let nextLetter = 0;
 
+// Select a random word (require to load words.js from index.html)
 let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 
+// Try to get the game state, statistical and settings structures from local storage
 let wordleState = getWordleState() || false;
 let wordleStats = getWordleStats() || false;
 let wordleSettings = getWordleSettings() || false;
 
+// Based on settings apply some general classes to body
 if (wordleSettings.darkTheme) document.body.classList.add('dark-theme');
 if (wordleSettings.highContrast) document.body.classList.add('high-contrast');
 
+// Initialize the game board creating enough rows and boxes (tiles)
 function initBoard() {
     let board = document.getElementById('game-board');
     for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
@@ -37,6 +43,7 @@ function initBoard() {
     }
 }
 
+// Initialize the game keyboard using a qwerty layout plus Enter & Del keys
 function initKeyboard() {
     let cont = document.getElementById('keyboard-cont');
     let layout = {
@@ -60,9 +67,12 @@ function initKeyboard() {
         });
         cont.appendChild(row);
     });
+    // Change the Del text in Del key for a backspace material outlined icon
+    // no-pointer-events prevent to catch the click in the icon and let the event to be listened by the button
     document.querySelector('.keyboard-button[data-key="Del"]').innerHTML = '<i class="material-icons-outlined no-pointer-events">backspace</i>';
 }
 
+// Add a keyup event listener for the real keyboard to catch the Backspace, the Enter, and all the letter keys
 document.addEventListener('keyup', (e) => {
     if (guessesRemaining === 0) {
         return;
@@ -84,18 +94,23 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
+// Add a click event listener for the virtual keyboard container
 document.getElementById('keyboard-cont').addEventListener('click', (e) => {
     const target = e.target;
+    // filter only clicks from virtual keys
     if (!target.classList.contains('keyboard-button')) {
         return;
     }
     let key = target.dataset.key;
     if (key === 'Del') {
+        // Translate Del to Backspace key
         key = 'Backspace';
     }
+    // Dispatch the click as a keyup event
     document.dispatchEvent(new KeyboardEvent('keyup', { 'key': key }));
 });
 
+// Inserts a new letter in the board
 function insertLetter(pressedKey) {
     if (nextLetter === 5) {
         return;
@@ -110,6 +125,7 @@ function insertLetter(pressedKey) {
     nextLetter += 1;
 }
 
+// Delete the last letter
 function deleteLetter() {
     let row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     let box = row.children[nextLetter - 1];
@@ -119,6 +135,7 @@ function deleteLetter() {
     nextLetter -= 1;
 }
 
+// Apply some checks and validations to the actual guess string and determine messages and game state
 function checkGuess() {
     let row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     let guessString = '';
@@ -245,6 +262,7 @@ function checkGuess() {
     if (wordleState) storeWordleState();
 }
 
+// Update a letter state in the keyboard
 function shadeKeyboard(letter, state) {
     for (const elem of document.getElementsByClassName('keyboard-button')) {
         if (elem.textContent === letter) {
@@ -283,6 +301,7 @@ const animateCSS = (element, animation, time = 250, prefix = 'animate__') =>
 
 // LOCAL STORAGE FUNCTIONS
 
+// Restores a game state previusly saved in local storage
 function restoreWordleState() {
     if (wordleState) {
         if (wordleState.gameStatus === 'IN_PROGRESS') {
@@ -312,26 +331,28 @@ function restoreWordleState() {
     }
 }
 
-
+// Get the game state from local storage or creates a initial one
 function getWordleState() {
     if (typeof (Storage) !== 'undefined') {
         return JSON.parse(localStorage.getItem('wordle-state')) ||
         {
-            boardState: ["", "", "", "", "", ""],
+            boardState: ['', '', '', '', '', ''],
             evaluations: [null, null, null, null, null, null],
-            gameStatus: "",
+            gameStatus: '',
             rowIndex: 0,
-            solution: ""
+            solution: ''
         }
     }
 }
 
+// Store the game state to local storage
 function storeWordleState() {
     if (typeof (Storage) !== 'undefined') {
         localStorage.setItem('wordle-state', JSON.stringify(wordleState));
     }
 }
 
+// Get the game statistics from local storage or creates a initial one
 function getWordleStats() {
     if (typeof (Storage) !== 'undefined') {
         return JSON.parse(localStorage.getItem('wordle-stats')) ||
@@ -347,12 +368,14 @@ function getWordleStats() {
     }
 }
 
+// Store the game statistics to local storage
 function storeWordleStats() {
     if (typeof (Storage) !== 'undefined') {
         localStorage.setItem('wordle-stats', JSON.stringify(wordleStats));
     }
 }
 
+// Calculate an average of guesses
 function averageGuesses() {
     if (wordleStats) {
         let games = 0;
@@ -368,6 +391,7 @@ function averageGuesses() {
     return 0.0;
 }
 
+// Get the game settings from local storage or creates a initial one
 function getWordleSettings() {
     if (typeof (Storage) !== 'undefined') {
         return JSON.parse(localStorage.getItem('wordle-settings')) ||
@@ -379,6 +403,7 @@ function getWordleSettings() {
     }
 }
 
+// Store the game settings to local storage
 function storeWordleSettings(wordleSettings) {
     if (typeof (Storage) !== 'undefined') {
         localStorage.setItem('wordle-settings', JSON.stringify(wordleSettings));
@@ -387,6 +412,7 @@ function storeWordleSettings(wordleSettings) {
 
 // NAV BAR ACTIONS
 
+// Use msgbox to display a modal help dialog
 function showHelp() {
     let msg = `
         <div id="help-container">
@@ -407,6 +433,7 @@ function showHelp() {
     msgbox('', msg);
 }
 
+// Use msgbox to display a modal statistics dialog
 function showStats() {
     let html = `
         <div id="stats-container">
@@ -448,6 +475,7 @@ function showStats() {
     msgbox('', html);
 }
 
+// Use msgbox to display a modal settings dialog
 function showSettings() {
     let html = `
         <div id="settings-container">
@@ -490,6 +518,7 @@ function showSettings() {
 
         </div>`;
     msgbox('', html);
+    // Event listener for changes in the settings controls
     document.getElementById('settings-container').addEventListener('click', (e) => {
         let target = e.target;
         let name = target.getAttribute('name');
@@ -526,6 +555,7 @@ function showSettings() {
     });
 }
 
+// Initializes the navigation bars buttons
 function initNavBar() {
     document.getElementById('button-menu').addEventListener('click', () => { toastr.warning('Menu dialog is a work in progres...') });
     document.getElementById('button-help').addEventListener('click', showHelp);
