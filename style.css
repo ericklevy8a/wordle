@@ -98,11 +98,29 @@ button.material-icons {
     font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
-.letter-box[data-state='empty'] { border: 2px solid var(--tile-border-color); }
-.letter-box[data-state='filled'] { border: 2px solid var(--tile-filled-border-color); color: var(--default-color); }
-.letter-box[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
-.letter-box[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
-.letter-box[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
+.letter-box[data-state='empty'] {
+    border: 2px solid var(--tile-border-color);
+}
+
+.letter-box[data-state='filled'] {
+    border: 2px solid var(--tile-filled-border-color);
+    color: var(--default-color);
+}
+
+.letter-box[data-state='absent'] {
+    color: var(--guessed-color);
+    background-color: var(--absent-bg-color);
+}
+
+.letter-box[data-state='present'] {
+    color: var(--guessed-color);
+    background-color: var(--present-bg-color);
+}
+
+.letter-box[data-state='correct'] {
+    color: var(--guessed-color);
+    background-color: var(--correct-bg-color);
+}
 
 #keyboard-cont {
     margin: 0 8px;
@@ -119,7 +137,7 @@ button.material-icons {
 .second-row::before,
 .second-row::after {
     content: " ";
-    flex:0.5;
+    flex: 0.5;
 }
 
 .keyboard-button {
@@ -139,15 +157,37 @@ button.material-icons {
     text-transform: uppercase;
 }
 
-.keyboard-button[data-key="Enter"] { flex: 1.75; }
-.keyboard-button[data-key="Del"] { flex: 1.75; }
+.keyboard-button[data-key="Enter"] {
+    flex: 1.75;
+}
 
-.keyboard-button[data-state='normal'] { color: var(--button-color); background-color: var(--button-bg-color); }
-.keyboard-button[data-state='absent'] { color: var(--guessed-color); background-color: var(--absent-bg-color); }
-.keyboard-button[data-state='present'] { color: var(--guessed-color); background-color: var(--present-bg-color); }
-.keyboard-button[data-state='correct'] { color: var(--guessed-color); background-color: var(--correct-bg-color); }
+.keyboard-button[data-key="Del"] {
+    flex: 1.75;
+}
 
-.no-pointer-events { pointer-events: none; }
+.keyboard-button[data-state='normal'] {
+    color: var(--button-color);
+    background-color: var(--button-bg-color);
+}
+
+.keyboard-button[data-state='absent'] {
+    color: var(--guessed-color);
+    background-color: var(--absent-bg-color);
+}
+
+.keyboard-button[data-state='present'] {
+    color: var(--guessed-color);
+    background-color: var(--present-bg-color);
+}
+
+.keyboard-button[data-state='correct'] {
+    color: var(--guessed-color);
+    background-color: var(--correct-bg-color);
+}
+
+.no-pointer-events {
+    pointer-events: none;
+}
 
 @media (min-width: 500px) {
     #keyboard-cont div {
@@ -173,20 +213,26 @@ button.material-icons {
 .fade {
     font-family: "Poppins", sans-serif;
 }
+
 .modal-dialog {
     color: var(--default-color) !important;
     background-color: var(--default-bg-color) !important;
     border: 1px solid var(--default-color) !important;
     width: 400px;
 }
+
 .modal-dialog p,
 .modal-dialog h5 {
     margin-bottom: 1em;
 }
-.modal-header, .modal-body, .modal-footer {
+
+.modal-header,
+.modal-body,
+.modal-footer {
     color: inherit !important;
     background-color: inherit !important;
 }
+
 .sample {
     display: inline-block;
     height: 24px;
@@ -199,47 +245,91 @@ button.material-icons {
     margin: 2px;
 
 }
+
 .correct {
     background-color: var(--correct-bg-color);
 }
+
 .present {
     background-color: var(--present-bg-color);
 }
+
 .absent {
     background-color: var(--absent-bg-color);
+}
+
+/* Some styling for about dialog */
+
+ul {
+    margin-top: 1em;
+}
+
+i {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-size: cover;
+    margin-right: 8px;
+}
+
+i.switcher {
+    background-image: url(./img/switcher.png);
+}
+
+i.tileslider {
+    background-image: url(./img/tileslider.png);
+}
+
+i.wordsearch {
+    background-image: url(./img/wordsearch.png);
+}
+
+i.memorama {
+    background-image: url(./img/memorama.png);
+}
+
+i.pokedex {
+    background-image: url(./img/pokedex.png);
 }
 
 /* Some styling for stats dialog */
 .modal-body * {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
+
 .modal-body h5 {
     text-transform: uppercase;
     text-align: center;
     font-size: large;
     font-weight: bold;
 }
+
 #stats-table {
     width: fit-content;
     margin: 0 auto 1em auto;
 }
+
 #stats-table td {
     width: 1em;
     text-align: center;
     vertical-align: top;
     padding: 0 8px;
 }
+
 #stats-table td.number {
     font-size: 2.5em;
     font-weight: 300;
 }
+
 #stats-table td.label {
     font-size: 12px;
     font-weight: 300;
 }
+
 #stats-graph {
     width: 100%;
 }
+
 #stats-graph .bar-outer {
     width: 100%;
     line-height: 24px;
@@ -247,11 +337,13 @@ button.material-icons {
     flex-direction: row;
     margin-bottom: 4px;
 }
+
 #stats-graph .bar-outer span {
     width: 1em;
     text-align: end;
     margin-right: 4px;
 }
+
 #stats-graph .bar-inner {
     min-width: 19px;
     line-height: 24px;
@@ -260,6 +352,7 @@ button.material-icons {
     text-align: right;
     padding: 0px 4px;
 }
+
 #stats-graph .highlight {
     color: var(--guessed-color);
     background-color: var(--correct-bg-color);
@@ -274,17 +367,20 @@ button.material-icons {
     justify-content: space-between;
     padding: 16px 0;
 }
+
 .setting .title {
     color: var(--default-color);
     display: block;
     font-size: 18px;
 }
+
 .setting .description {
     color: var(--default-color);
     filter: brightness(0.5);
     display: block;
     font-size: 12px;
 }
+
 .setting .switch {
     background-color: #555;
     height: 20px;
@@ -294,9 +390,11 @@ button.material-icons {
     position: relative;
     cursor: pointer;
 }
+
 .setting .switch[checked] {
     background-color: var(--correct-bg-color);
 }
+
 .setting .switch .knob {
     display: block;
     height: 16px;
@@ -309,6 +407,7 @@ button.material-icons {
     transition: all 250ms;
     pointer-events: none;
 }
+
 .setting .switch[checked] .knob {
     right: 2px;
     left: auto;
