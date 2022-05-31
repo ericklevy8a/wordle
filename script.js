@@ -412,6 +412,28 @@ function storeWordleSettings(wordleSettings) {
 
 // NAV BAR ACTIONS
 
+// Use msgbox to display a modal about dialog
+function showAbout() {
+    let html = `
+        <div id="about-container">
+            <p>© Copyright 2022 by Erick Levy!</p>
+            <p>Inspired on Josh Wardle game and based on Paul Akinyemi\'s article on freeCodeCamp "How to Build a Wordle Clone in JavaScript".</p>
+            <p>Thank you for taking the time to learn about and play with this little app.</p>
+            <h5>Other Games</h5>
+            <p>There are other games and Apps I was implemented and published. If you want to take a look at them,
+            here are the links: </p>
+            <ul>
+                <li><a href="../switcher/"><i class="switcher"></i>The Switcher Game</a></li>
+                <li><a href="../tileslider/"><i class="tileslider"></i>The Tile Slider</a></li>
+                <li><a href="../wordsearch/"><i class="wordle"></i>Word Search</a></li>
+                <li><a href="../memorama/"><i class="memorama"></i>Memorama</a></li>
+                <li><a href="../pokedex/"><i class="pokedex"></i>Pokedex (not a game)</a></li>
+            </ul>
+        </div>
+    `;
+    msgbox('About This Game', html);
+}
+
 // Use msgbox to display a modal help dialog
 function showHelp() {
     let msg = `
@@ -424,10 +446,6 @@ function showHelp() {
             <p><span class="sample correct">C</span>: letter is in the correct spot.<br>
             <span class="sample present">P</span>: letter is in the word but in the wrong spot.<br>
             <span class="sample absent">A</span>: letter is not in the word in any spot.</p>
-            <h5>ABOUT THIS GAME</h5>
-            <p>© Copyright 2022 by Erick Levy!</p>
-            <p>Inspired on Josh Wardle game and based on Paul Akinyemi\'s article on freeCodeCamp "How to Build a Wordle Clone in JavaScript".</p>
-            <p>Thank you for taking the time to learn about and play with this little app.</p>
         </div>
     `;
     msgbox('', msg);
@@ -557,7 +575,7 @@ function showSettings() {
 
 // Initializes the navigation bars buttons
 function initNavBar() {
-    document.getElementById('button-menu').addEventListener('click', () => { toastr.warning('Menu dialog is a work in progres...') });
+    document.getElementById('button-menu').addEventListener('click', showAbout);
     document.getElementById('button-help').addEventListener('click', showHelp);
     document.getElementById('button-stats').addEventListener('click', showStats);
     document.getElementById('button-settings').addEventListener('click', showSettings);
