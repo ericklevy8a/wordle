@@ -10,13 +10,20 @@
 
 const NUMBER_OF_GUESSES = 6;
 
+const DIFFICULTY = {
+    EASY: 0.25,
+    MEDIUM: 0.5,
+    HARD: 1.0,
+}
+
 // Global vars
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let nextLetter = 0;
+let difficulty = DIFFICULTY.EASY;
 
 // Select a random word (require to load words.js from index.html)
-let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
+let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length * difficulty)];
 
 // Try to get the game state, statistical and settings structures from local storage
 let wordleState = getWordleState() || false;
